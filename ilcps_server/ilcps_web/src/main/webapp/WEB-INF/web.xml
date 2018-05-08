@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://java.sun.com/xml/ns/javaee"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	version="2.5">
+	<display-name>ssh-web</display-name>
+
+	<!-- Spring容器配置 -->
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<!-- classpath 加载当前项目的类路径下的文件 -->
+		<!-- classpath* 加载当前项目及所有关联项目类路径下的文件 -->
+		<param-value>classpath*:applicationContext.xml</param-value>
+	</context-param>
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+
+	<!-- OpenSessionInViewFilter 解决Spring整合Hibernate， 页面no session问题。 -->
+	<!-- OpenEntityManagerInViewFilter 解决Spring整合Jpa， 页面no entityManager问题。 -->
+	<filter>
+		<filter-name>openEntityManagerInViewFilter</filter-name>
+		<filter-class>org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>openEntityManagerInViewFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	
+	<!-- Shiro委托代理过滤器，是一个过滤器，拦截请求,把	请求处理委托交给Spring的过滤器工厂处理。 -->
+	<!-- 在Spring容器中，一定要有一个bean的id是shiroFilter，对应类型是ShiroFilterFactroyBean -->
+	<!-- The filter-name matches name of a 'shiroFilter' bean inside applicationContext.xml -->
+	<filter>
+	    <filter-name>shiroFilter</filter-name>
+	    <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+	    <init-param>
+	        <param-name>targetFilterLifecycle</param-name>
+	        <param-value>true</param-value>
+	    </init-param>
+	</filter>
+	<filter-mapping>
+	    <filter-name>shiroFilter</filter-name>
+	    <url-pattern>/*</url-pattern>
+	</filter-mapping>
+	
+
+	<!-- struts核心过滤器 -->
+	<filter>
+		<filter-name>struts</filter-name>
+		<filter-class>org.apache.struts2.dispatcher.ng.filter.StrutsPrepareAndExecuteFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>struts</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	
+</web-app>

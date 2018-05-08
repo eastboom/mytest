@@ -1,0 +1,45 @@
+<html>
+<head>
+<title>系统访问压力图</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<script type="text/javascript" src="/ilcps_web/js/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="/ilcps_web/components/fusioncharts/fusioncharts.js"></script>
+<script type="text/javascript" src="/ilcps_web/components/fusioncharts/themes/fusioncharts.theme.fint.js"></script>
+<script type="text/javascript">
+  FusionCharts.ready(function(){
+	  // 异步请求，返回json格式
+      $.ajax({
+      	url : "/ilcps_web/stat/statChartAction_onlineinfoResult",
+      	dataType:"json",
+      	success:initChart	// 回调函数调用的另外的写法
+      });
+  });
+  
+  // 初始化图表
+  function initChart(jsonData){
+	  var revenueChart = new FusionCharts({
+	        "type": "line",// column2d column3d pie2D pie3D line
+	        "renderAt": "chartContainer",
+	        "width": "800",
+	        "height": "400",
+	        "dataFormat": "json",
+	        "dataSource":  {
+	          "chart": {
+	            "caption": "系统访问压力图",
+	            "subCaption": "时间段登陆人数",
+	            "xAxisName": "小时",
+	            "yAxisName": "访问人数",
+	            "theme": "fint"
+	         },
+	         "data": jsonData		// ajax请求服务器返回的数据
+	      }
+
+	  });
+	  revenueChart.render();
+  }
+</script>
+</head>
+<body>
+  <div id="chartContainer">FusionCharts XT will load here!</div>
+</body>
+</html>

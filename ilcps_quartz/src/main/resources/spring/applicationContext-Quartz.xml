@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:jpa="http://www.springframework.org/schema/data/jpa" xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+		http://www.springframework.org/schema/data/jpa 
+		http://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
+	
+	<!-- Spring整合Quartz-->
+	
+	<!-- 1. 创建执行的任务bean  -->
+	<bean id="jobDetail" class="cn.itcast.job.JobDetail"/>
+	
+	<!-- 2. 创建任务工厂，注入任务bean、任务bean的方法 -->
+	<bean id="jobDetailFactory" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<!-- 2.1 注入任务bean-->
+		<property name="targetObject" ref="jobDetail"></property>
+		<!-- 2.1 任务bean的方法-->
+		<property name="targetMethod" value="executeJob"></property>
+	</bean>
+	
+	<!-- 3. 创建任务执行触发器，注入任务工厂、执行表达式 -->
+	<bean id="trigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<!-- 3.1注入任务工厂 -->
+		<property name="jobDetail" ref="jobDetailFactory"></property>
+		<!-- 3.2 注入任务执行表达式 (秒     分钟     小时    日     月   周 ) -->
+		<property name="cronExpression" value="0 * * * * ?"></property>
+	</bean>
+	
+	<!-- 4. 创建任务计划，注入任务执行触发器 -->
+	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<!-- 4.1注入任务执行触发器 -->
+		<property name="triggers">
+			<!-- 注入数组类型参数 -->
+			<array>
+				<!-- 要执行的触发器 -->
+				<ref bean="trigger"/>
+			</array>
+		</property>
+	</bean>
+	
+</beans>
+
+
+
+
+
+
+
+

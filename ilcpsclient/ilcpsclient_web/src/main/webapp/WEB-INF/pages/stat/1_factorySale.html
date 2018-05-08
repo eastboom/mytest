@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>amCharts examples</title>
+        
+        <script type="text/javascript" src="/ilcps_web/js/jquery-1.11.3.min.js"></script>
+        <script src="/ilcps_web/components/newAmcharts/amcharts/amcharts.js" type="text/javascript"></script>
+        <script src="/ilcps_web/components/newAmcharts/amcharts/pie.js" type="text/javascript"></script>
+        
+        <script>
+            var chart;
+
+            /*
+            var chartData = [
+                {
+                    "country": "United States",  统计指标
+                    "visits": 9252				  统计指标对应的值
+                }
+            ];
+            */
+
+
+            AmCharts.ready(function () {
+                // 异步请求，返回json格式
+                $.ajax({
+                	url : "/ilcps_web/stat/statChartAction_factorySaleResult",
+                	dataType:"json",
+                	success:function(chartData){
+                		// 调用初始化图表方法
+                		initChart(chartData);
+                	}
+                });
+            });
+            // 初始化图表
+            function initChart(chartData){
+            	// PIE CHART
+                chart = new AmCharts.AmPieChart();
+
+                // title of the chart
+                chart.addTitle("根据生产厂家统计", 16);
+
+                chart.dataProvider = chartData;
+                chart.titleField = "factoryName";
+                chart.valueField = "amount";
+                chart.sequencedAnimation = true;
+                chart.startEffect = "elastic";
+                chart.innerRadius = "30%";
+                chart.startDuration = 2;
+                chart.labelRadius = 15;
+                chart.balloonText = "[[title]]<br><span style='font-size:14px'><b>[[value]]</b> ([[percents]]%)</span>";
+                // the following two lines makes the chart 3D
+                chart.depth3D = 10;
+                chart.angle = 15;
+
+                // WRITE
+                chart.write("chartdiv");
+            }
+        </script>
+    </head>
+
+    <body>
+        <div id="chartdiv" style="width:600px; height:400px;"></div>
+    </body>
+
+</html>
